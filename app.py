@@ -2,6 +2,8 @@ import os
 import streamlit as st
 import pandas as pd
 import numpy as np
+import plotly.express as px
+import plotly.graph_objects as go
 
 st.set_page_config(page_title="Data Centre ESG Analyser", layout="wide")
 
@@ -156,6 +158,70 @@ for i, item in enumerate(kpi_values):
     else:
         delta_str = f"{pct:+.1f}%"
     cols[i].metric(cfg["label"], value_str, delta_str)
+
+
+# Visualization section
+st.subheader("KPI Trends & Analysis")
+
+# Prepare data for charting: aggregate by year
+chart_data = []
+for year in years:
+    for cfg in KPI_CONFIG:
+        key = cfg["key"]
+        agg = cfg["agg"]
+        val = compute_metric(df, year_col, year, key, agg)
+        chart_data.append({
+            "Year": year,
+            "KPI": cfg["label"],
+            "Value": val,
+            "Key": key
+        })
+
+chart_df = pd.DataFrame(chart_data)
+
+# Bar charts for main KPIs (Energy, Water, GHG Emissions, Land)
+bar_kpi_keys = ["energy_kwh", "water_liters", "ghg_emissions_kgco2e", "land_used_m2"]
+bar_kpi_labels = ["Energy (kWh)", "Water (Liters)", "GHG Emissions (kgCO2e)", "Local Ecosystem (m²)"]
+
+st.write("**Bar Charts: Main KPI Trends**")
+bar_cols = st.columns(2)
+
+for idx, (key, label) in enumerate(zip(bar_kpi_keys, bar_kpi_labels)):
+    sub = chart_df[chart_df["Key"] == key]
+    if not sub.empty:
+        fig = px.bar(
+            sub,
+            x="Year",
+            y="Value",
+            title=label,
+            labels={"Value": label, "Year": "Year"},
+            color_discrete_sequence=["#00CED1"]
+        )
+        fig.update_layout(height=400, showlegend=False)
+        fig.update_traces(marker_line_width=0, width=0.5)
+        bar_cols[idx % 2].plotly_chart(fig, use_container_width=True)
+
+# Line charts for PUE and CUE (Carbon Usage Effectiveness & Power Usage Effectiveness)
+st.write("**Line Charts: Efficiency Metrics Trends**")
+line_cols = st.columns(2)
+
+line_kpi_keys = ["pue", "co2e_per_kwh"]
+line_kpi_labels = ["Power Usage Effectiveness (PUE)", "Carbon Usage Effectiveness (CUE - kgCO2e/kWh)"]
+
+for idx, (key, label) in enumerate(zip(line_kpi_keys, line_kpi_labels)):
+    sub = chart_df[chart_df["Key"] == key]
+    if not sub.empty:
+        fig = px.line(
+            sub,
+            x="Year",
+            y="Value",
+            title=label,
+            labels={"Value": label, "Year": "Year"},
+            markers=True,
+            color_discrete_sequence=["#ff7f0e"]
+        )
+        fig.update_layout(height=400, showlegend=False)
+        line_cols[idx].plotly_chart(fig, use_container_width=True)
 
 
 # Show data preview and simple summary below
