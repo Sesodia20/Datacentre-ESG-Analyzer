@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
+from gemini_api import generate_esg_analysis, generate_recommendations
 
 st.set_page_config(page_title="Data Centre ESG Analyser", layout="wide")
 
@@ -222,6 +223,42 @@ for idx, (key, label) in enumerate(zip(line_kpi_keys, line_kpi_labels)):
         )
         fig.update_layout(height=400, showlegend=False)
         line_cols[idx].plotly_chart(fig, use_container_width=True)
+
+
+# AI-Powered Analysis Section
+st.subheader("AI-Powered ESG Analysis & Recommendations")
+
+with st.sidebar:
+    st.header("AI Analysis Settings")
+    enable_ai = st.checkbox("Enable AI Analysis", value=False)
+    
+    if enable_ai:
+        ai_option = st.radio(
+            "Select Analysis Type:",
+            ("Full Analysis", "Energy Focus", "Water Focus", "Emissions Focus")
+        )
+
+if enable_ai:
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        if st.button("Generate Analysis", key="analyze_btn"):
+            with st.spinner("Generating analysis..."):
+                analysis = generate_esg_analysis(df, selected_year, prev_year)
+                st.write(analysis)
+    
+    with col2:
+        focus_map = {
+            "Full Analysis": "overall",
+            "Energy Focus": "energy",
+            "Water Focus": "water",
+            "Emissions Focus": "emissions"
+        }
+        if st.button("Generate Recommendations", key="recommend_btn"):
+            with st.spinner("Generating recommendations..."):
+                focus_area = focus_map.get(ai_option, "overall")
+                recommendations = generate_recommendations(df, selected_year, prev_year, focus_area)
+                st.write(recommendations)
 
 
 # Show data preview and simple summary below

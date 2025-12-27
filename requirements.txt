@@ -1,4 +1,6 @@
 streamlit
 pandas
-plotly==25.3
+plotly>=5.13.0
 numpy
+google-generativeai
+python-dotenv
