@@ -24,10 +24,18 @@ def plot_bar_charts(chart_df):
                 y="Value",
                 title=label,
                 labels={"Value": label, "Year": "Year"},
-                color_discrete_sequence=["#00CED1"]
+                color_discrete_sequence=["#9370DB"]
             )
-            fig.update_layout(height=400, showlegend=False)
+            fig.update_layout(
+                height=400,
+                showlegend=False,
+                plot_bgcolor='#000000',
+                paper_bgcolor='#000000',
+                font=dict(color='white'),
+            )
             fig.update_traces(marker_line_width=0, width=0.5)
+            fig.update_xaxes(showgrid=True, gridcolor='#333333', tickfont=dict(color='white'), title_font=dict(color='white'))
+            fig.update_yaxes(showgrid=True, gridcolor='#333333', tickfont=dict(color='white'), title_font=dict(color='white'))
             bar_cols[idx % 2].plotly_chart(fig, use_container_width=True)
 
 
@@ -56,5 +64,14 @@ def plot_line_charts(chart_df):
                 markers=True,
                 color_discrete_sequence=["#ff7f0e"]
             )
-            fig.update_layout(height=400, showlegend=False)
+            fig.update_layout(
+                height=400,
+                showlegend=False,
+                plot_bgcolor='#000000',
+                paper_bgcolor='#000000',
+                font=dict(color='white'),
+                legend=dict(bgcolor='rgba(0,0,0,0)')
+            )
+            fig.update_xaxes(showgrid=True, gridcolor='#333333', tickfont=dict(color='white'), title_font=dict(color='white'))
+            fig.update_yaxes(showgrid=True, gridcolor='#333333', tickfont=dict(color='white'), title_font=dict(color='white'))
             line_cols[idx].plotly_chart(fig, use_container_width=True)
