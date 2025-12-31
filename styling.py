@@ -81,15 +81,17 @@ def apply_page_styling():
             border-color: #222222 !important;
         }
         
-        /* Button and control styling: make controls dark */
-        button, .stButton>button, input, textarea, select, option, .stSelectbox, .stTextInput, .stNumberInput {
+        /* Button and control styling: make controls dark with visible borders */
+        button, .stButton>button, .stDownloadButton>button, input, textarea, select, option, .stSelectbox, .stTextInput, .stNumberInput {
             background-color: #000000 !important;
             color: #ffffff !important;
-            border: 1px solid #222222 !important;
-            border-radius: 4px !important;
+            border: 1.5px solid #555555 !important;
+            border-radius: 6px !important;
+            box-shadow: 0 0 0 1px #111111 !important;
         }
-        button:hover, .stButton>button:hover {
+        button:hover, .stButton>button:hover, .stDownloadButton>button:hover {
             background-color: #111111 !important;
+            border-color: #777777 !important;
         }
         /* Force all visible text to white for dark theme */
         body, p, span, h1, h2, h3, h4, h5, div, a, label, td, th, input, textarea, select, option {
@@ -185,12 +187,16 @@ def apply_page_styling():
         }
 
         /* Checkboxes: make the box visible with a white border and dark background */
-        input[type="checkbox"], div[role="checkbox"], .stCheckbox, .stCheckbox>div, .stCheckbox div[role="checkbox"] {
+        /* Checkboxes: white box and white tick, stronger border */
+        input[type="checkbox"], div[role="checkbox"] {
             background-color: #000000 !important;
             color: #ffffff !important;
-            border: 2px solid #ffffff !important;
-            border-radius: 4px !important;
-            box-shadow: none !important;
+            border: 2.5px solid #ffffff !important;
+            border-radius: 5px !important;
+            box-shadow: 0 0 0 1px #ffffff !important;
+            accent-color: #ffffff !important;
+            width: 18px !important;
+            height: 18px !important;
         }
         /* Ensure the inner tick mark is white and visible */
         div[role="checkbox"] svg, input[type="checkbox"] + svg, .stCheckbox svg {
@@ -202,6 +208,9 @@ def apply_page_styling():
         /* Ensure the label text remains white */
         .stCheckbox label, .stCheckbox__label, div[role="checkbox"] + label {
             color: #ffffff !important;
+            border: none !important;
+            box-shadow: none !important;
+            padding-left: 6px !important;
         }
 
         /* Radio buttons: white circular outline and visible white dot when selected */

@@ -32,6 +32,7 @@ def plot_bar_charts(chart_df):
                 plot_bgcolor='#000000',
                 paper_bgcolor='#000000',
                 font=dict(color='white'),
+                title_font=dict(color='white'),
             )
             fig.update_traces(marker_line_width=0, width=0.5)
             fig.update_xaxes(showgrid=True, gridcolor='#333333', tickfont=dict(color='white'), title_font=dict(color='white'))
@@ -70,6 +71,7 @@ def plot_line_charts(chart_df):
                 plot_bgcolor='#000000',
                 paper_bgcolor='#000000',
                 font=dict(color='white'),
+                title_font=dict(color='white'),
                 legend=dict(bgcolor='rgba(0,0,0,0)')
             )
             fig.update_xaxes(showgrid=True, gridcolor='#333333', tickfont=dict(color='white'), title_font=dict(color='white'))

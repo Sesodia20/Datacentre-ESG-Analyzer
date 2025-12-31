@@ -6,11 +6,18 @@ from gemini_api import generate_esg_analysis, generate_recommendations
 from metric import KPI_CONFIG, compute_metric, format_number, calculate_kpi_values, prepare_chart_data
 from charts import plot_bar_charts, plot_line_charts
 from styling import apply_page_styling
+from analysis import create_pdf_report
 
 st.set_page_config(page_title="Data Centre ESG Analyser", layout="wide")
 
 # Apply page styling with grey background and custom CSS
 apply_page_styling()
+
+# Initialize session storage for AI outputs
+if "analysis_text" not in st.session_state:
+    st.session_state.analysis_text = None
+if "recommendations_text" not in st.session_state:
+    st.session_state.recommendations_text = None
 
 st.title("Data Centre ESG Analyser")
 st.write("Load and analyze ESG data for data centres")
@@ -18,8 +25,8 @@ st.write("Load and analyze ESG data for data centres")
 # Sidebar for file selection
 with st.sidebar:
     st.header("File Selection")
-    # Show only two concise options without the extra prompt text
-    file_source = st.radio("", ("Upload CSV", "Use Default CSV"), index=0, key="file_source_radio")
+    # Show two options with a visible prompt
+    file_source = st.radio("Choose data source:", ("Upload CSV", "Use Default CSV"), index=0, key="file_source_radio")
 
 # Load and display data
 def find_default_csv():
@@ -189,6 +196,7 @@ if enable_ai:
         if st.button("Generate Analysis", key="analyze_btn"):
             with st.spinner("Generating analysis..."):
                 analysis = generate_esg_analysis(df, selected_year, prev_year)
+                st.session_state.analysis_text = analysis
                 st.write(analysis)
     
     with col2:
@@ -202,7 +210,26 @@ if enable_ai:
             with st.spinner("Generating recommendations..."):
                 focus_area = focus_map.get(ai_option, "overall")
                 recommendations = generate_recommendations(df, selected_year, prev_year, focus_area)
+                st.session_state.recommendations_text = recommendations
                 st.write(recommendations)
+
+    # PDF download section
+    st.markdown("### Export AI Output")
+    if st.session_state.analysis_text and st.session_state.recommendations_text:
+        pdf_bytes = create_pdf_report(
+            st.session_state.analysis_text,
+            st.session_state.recommendations_text,
+            selected_year,
+            prev_year,
+        )
+        st.download_button(
+            label="Download PDF (Analysis + Recommendations)",
+            data=pdf_bytes,
+            file_name=f"esg_report_{selected_year}.pdf",
+            mime="application/pdf",
+        )
+    else:
+        st.info("Generate both analysis and recommendations to enable PDF download.")
 
 
 # Show data preview and simple summary below
