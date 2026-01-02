@@ -26,7 +26,8 @@ st.write("Load and analyze ESG data for data centres")
 with st.sidebar:
     st.header("File Selection")
     # Show two options with a visible prompt
-    file_source = st.radio("Choose data source:", ("Upload CSV", "Use Default CSV"), index=0, key="file_source_radio")
+    st.write("**Choose data source:**")
+    file_source = st.selectbox("Data source", ("Upload CSV", "Use Default CSV"), index=0, label_visibility="collapsed", key="file_source_radio")
 
 # Load and display data
 def find_default_csv():
@@ -143,24 +144,49 @@ for row in range(2):
             value_str = format_number(curr, unit=cfg.get("unit"), is_float=cfg.get("is_float", False))
             if pct is None or pd.isna(pct):
                 delta_str = "—"
+                delta_color = "#888888"
             else:
                 delta_str = f"{pct:+.1f}%"
+                delta_color = "#00ff00" if pct > 0 else "#ff3333"
             
             # Create styled metric box with border and grey shading
             with cols[col_idx]:
                 style = get_kpi_style(cfg["key"], curr)
-                # Apply styled container with HTML
+                # Apply styled container with HTML - embossed design
                 st.markdown(f"""
                     <div style="
-                        background-color: #000000;
-                        border: 1px solid #222222;
-                        border-radius: 8px;
-                        padding: 16px;
-                        box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+                        background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
+                        border: 2px solid #444444;
+                        border-top: 2px solid #555555;
+                        border-left: 2px solid #555555;
+                        border-bottom: 2px solid #111111;
+                        border-right: 2px solid #111111;
+                        border-radius: 12px;
+                        padding: 20px;
+                        min-height: 200px;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: space-between;
+                        box-shadow: 
+                            inset 0 1px 0 rgba(255,255,255,0.1),
+                            0 8px 16px rgba(0,0,0,0.8),
+                            0 2px 4px rgba(0,0,0,0.6);
                     ">
-                           <p style="margin: 0; color: #ffffff; font-size: 16px; font-weight: 600; font-family: Tahoma, Geneva, Verdana, sans-serif;">{cfg['label']}</p>
-                           <p style="margin: 12px 0 0 0; color: #ffffff; font-size: 32px; font-weight: bold; font-family: Tahoma, Geneva, Verdana, sans-serif;">{value_str}</p>
-                           <p style="margin: 6px 0 0 0; color: {'#2ecc71' if (isinstance(pct, (int, float)) and pct>0) else ('#ff6b6b' if (isinstance(pct, (int, float)) and pct<0) else '#cccccc')}; font-size: 14px; font-family: Tahoma, Geneva, Verdana, sans-serif;">{delta_str}</p>
+                           <div>
+                               <p style="margin: 0; color: #ffffff; font-size: 13px; font-weight: 600; font-family: Tahoma, Geneva, Verdana, sans-serif; text-transform: uppercase; letter-spacing: 1px; opacity: 0.9;">{cfg['label']}</p>
+                               <p style="margin: 12px 0 0 0; color: #ffffff; font-size: 28px; font-weight: bold; font-family: Tahoma, Geneva, Verdana, sans-serif; text-shadow: 0 2px 4px rgba(0,0,0,0.7); line-height: 1.2;">{value_str}</p>
+                           </div>
+                           <p style="
+                               margin: 0; 
+                               color: {delta_color};
+                               font-size: 16px; 
+                               font-weight: bold;
+                               font-family: Tahoma, Geneva, Verdana, sans-serif;
+                               padding: 8px 12px;
+                               border-radius: 6px;
+                               display: inline-block;
+                               text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+                           ">{delta_str}</p>
                     </div>
                 """, unsafe_allow_html=True)
 
@@ -184,9 +210,11 @@ with st.sidebar:
     enable_ai = st.checkbox("Enable AI Analysis", value=False)
     
     if enable_ai:
-        ai_option = st.radio(
-            "Select Analysis Type:",
-            ("Full Analysis", "Energy Focus", "Water Focus", "Emissions Focus")
+        st.write("**Select Analysis Type:**")
+        ai_option = st.selectbox(
+            "Analysis Type",
+            ("Full Analysis", "Energy Focus", "Water Focus", "Emissions Focus"),
+            label_visibility="collapsed"
         )
 
 if enable_ai:

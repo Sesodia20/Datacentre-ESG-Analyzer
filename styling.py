@@ -187,16 +187,22 @@ def apply_page_styling():
         }
 
         /* Checkboxes: make the box visible with a white border and dark background */
-        /* Checkboxes: white box and white tick, stronger border */
+        /* Checkboxes: bright white box and bright white tick, stronger border */
         input[type="checkbox"], div[role="checkbox"] {
             background-color: #000000 !important;
             color: #ffffff !important;
-            border: 2.5px solid #ffffff !important;
+            border: 3px solid #ffffff !important;
             border-radius: 5px !important;
-            box-shadow: 0 0 0 1px #ffffff !important;
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.8) !important;
             accent-color: #ffffff !important;
-            width: 18px !important;
-            height: 18px !important;
+            width: 20px !important;
+            height: 20px !important;
+        }
+        /* Make checked state more visible */
+        input[type="checkbox"]:checked, div[role="checkbox"][aria-checked="true"] {
+            background-color: #ffffff !important;
+            border-color: #ffffff !important;
+            box-shadow: 0 0 12px rgba(255, 255, 255, 1) !important;
         }
         /* Ensure the inner tick mark is white and visible */
         div[role="checkbox"] svg, input[type="checkbox"] + svg, .stCheckbox svg {
