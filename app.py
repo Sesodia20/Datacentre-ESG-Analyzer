@@ -293,18 +293,31 @@ try:
         'background-color': '#000000',
         'color': '#ffffff',
         'border-color': '#222222'
-    })
-    st.write(styled)
+    }).set_table_styles([
+        {'selector': 'thead th', 'props': [('background-color', '#000000'), ('color', '#ffffff'), ('border-color', '#222222'), ('font-weight', 'bold')]},
+        {'selector': 'tbody th', 'props': [('background-color', '#000000'), ('color', '#ffffff'), ('border-color', '#222222'), ('font-weight', 'bold')]},
+        {'selector': 'td', 'props': [('background-color', '#000000'), ('color', '#ffffff'), ('border-color', '#222222')]},
+        {'selector': 'table', 'props': [('background-color', '#000000'), ('border-collapse', 'collapse')]}
+    ])
+    st.table(styled)
 except Exception:
     st.dataframe(df, use_container_width=True)
 
 st.subheader("Summary Statistics")
 try:
-    styled_desc = df.describe(include="all").style.set_properties(**{
+    desc_df = df.describe(include="all")
+    # Format None/NaN values to be visible
+    desc_df = desc_df.fillna('—')
+    styled_desc = desc_df.style.set_properties(**{
         'background-color': '#000000',
         'color': '#ffffff',
         'border-color': '#222222'
-    })
-    st.write(styled_desc)
+    }).set_table_styles([
+        {'selector': 'thead th', 'props': [('background-color', '#000000'), ('color', '#ffffff'), ('border-color', '#222222'), ('font-weight', 'bold')]},
+        {'selector': 'tbody th', 'props': [('background-color', '#000000'), ('color', '#ffffff'), ('border-color', '#222222'), ('font-weight', 'bold')]},
+        {'selector': 'td', 'props': [('background-color', '#000000'), ('color', '#ffffff'), ('border-color', '#222222')]},
+        {'selector': 'table', 'props': [('background-color', '#000000'), ('border-collapse', 'collapse')]}
+    ]).format(lambda x: str(x) if x != 'None' else '—')
+    st.table(styled_desc)
 except Exception:
     st.dataframe(df.describe(include="all"), use_container_width=True)

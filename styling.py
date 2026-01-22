@@ -25,16 +25,126 @@ def apply_page_styling():
             border-color: #000000 !important;
         }
 
-        /* Sidebar styling */
+        /* Sidebar styling - refactored without aggressive * selector */
         [data-testid="stSidebar"] {
             background-color: #0b0b0b;
         }
 
-        /* Force all elements inside sidebar to dark */
-        [data-testid="stSidebar"] * {
+        /* Style specific sidebar elements without affecting nested content */
+        [data-testid="stSidebar"] .stSelectbox,
+        [data-testid="stSidebar"] .stTextInput,
+        [data-testid="stSidebar"] .stNumberInput,
+        [data-testid="stSidebar"] .stMultiSelect {
+            background-color: transparent;
+            color: #ffffff;
+        }
+
+        /* Sidebar Selectbox - single white border on outer container only */
+        [data-testid="stSidebar"] .stSelectbox > div {
+            border: 2.5px solid #ffffff !important;
+            border-radius: 6px !important;
+            padding: 0px !important;
+            background-color: #000000 !important;
+        }
+        /* Combobox - no border, black background, white text */
+        [data-testid="stSidebar"] div[role="combobox"] {
             background-color: #000000 !important;
             color: #ffffff !important;
-            border-color: #222222 !important;
+            border: none !important;
+            padding: 8px 10px !important;
+            font-size: 14px !important;
+            outline: none !important;
+            box-shadow: none !important;
+        }
+        /* BaseWeb select - no inner border */
+        [data-testid="stSidebar"] [data-baseweb="select"] > div {
+            border: none !important;
+            background-color: #000000 !important;
+        }
+        [data-testid="stSidebar"] [data-baseweb="select"] input {
+            background-color: #000000 !important;
+            color: #ffffff !important;
+            border: none !important;
+        }
+        /* Dropdown arrow - white color */
+        [data-testid="stSidebar"] [data-baseweb="select"] svg {
+            fill: #ffffff !important;
+            color: #ffffff !important;
+            stroke: #ffffff !important;
+        }
+        /* Dropdown list - black background, white text */
+        [data-testid="stSidebar"] div[role="listbox"] {
+            background-color: #000000 !important;
+            border: none !important;
+            border-radius: 0px !important;
+        }
+        [data-testid="stSidebar"] div[role="option"] {
+            background-color: #000000 !important;
+            color: #ffffff !important;
+            border: none !important;
+        }
+        [data-testid="stSidebar"] div[role="option"]:hover {
+            background-color: #1a1a1a !important;
+        }
+        /* Selected option text - white */
+        [data-testid="stSidebar"] div[role="listbox"] [aria-selected="true"] {
+            background-color: #1a1a1a !important;
+            color: #ffffff !important;
+        }
+
+        /* Sidebar Text/Number Input - visible white border */
+        [data-testid="stSidebar"] .stTextInput > div > div > input,
+        [data-testid="stSidebar"] .stNumberInput > div > div > input {
+            border: 2px solid #ffffff !important;
+            border-radius: 6px !important;
+            background-color: #000000 !important;
+            color: #ffffff !important;
+        }
+
+        /* Sidebar Multiselect - visible white border */
+        [data-testid="stSidebar"] .stMultiSelect > div {
+            border: 2px solid #ffffff !important;
+            border-radius: 6px !important;
+            background-color: #000000 !important;
+        }
+
+        /* Sidebar File Uploader - visible white border */
+        [data-testid="stSidebar"] [data-testid="stFileUploader"],
+        [data-testid="stSidebar"] div[data-testid="stDropzone"] {
+            border: 2px solid #ffffff !important;
+            border-radius: 8px !important;
+            background-color: #000000 !important;
+        }
+        [data-testid="stSidebar"] [data-testid="stFileUploader"] button,
+        [data-testid="stSidebar"] div[data-testid="stDropzone"] button {
+            border: 2px solid #ffffff !important;
+            background-color: #000000 !important;
+            color: #ffffff !important;
+            border-radius: 6px !important;
+        }
+
+        /* Sidebar Checkbox - white box with visible checkmark */
+        [data-testid="stSidebar"] input[type="checkbox"],
+        [data-testid="stSidebar"] div[role="checkbox"] {
+            border: 2.5px solid #ffffff !important;
+            border-radius: 4px !important;
+            background-color: #000000 !important;
+            accent-color: #ffffff !important;
+            width: 20px !important;
+            height: 20px !important;
+            cursor: pointer !important;
+        }
+        [data-testid="stSidebar"] input[type="checkbox"]:checked,
+        [data-testid="stSidebar"] div[role="checkbox"][aria-checked="true"] {
+            background-color: #ffffff !important;
+            border-color: #ffffff !important;
+        }
+        [data-testid="stSidebar"] input[type="checkbox"]:checked::after {
+            content: '✓';
+            color: #000000 !important;
+        }
+        [data-testid="stSidebar"] .stCheckbox label {
+            color: #ffffff !important;
         }
 
         /* Additional Streamlit container selectors to prevent default light boxes */
@@ -74,8 +184,18 @@ def apply_page_styling():
             border: 1px solid #222222 !important;
             border-radius: 5px;
         }
-        /* Make table cells fully black */
-        [data-testid="stDataFrame"] td, [data-testid="stDataFrame"] th, table td, table th {
+        /* Make table headers black background with white text */
+        [data-testid="stDataFrame"] thead, table thead {
+            background-color: #000000 !important;
+        }
+        [data-testid="stDataFrame"] th, table th {
+            background-color: #000000 !important;
+            color: #ffffff !important;
+            border-color: #222222 !important;
+            font-weight: bold !important;
+        }
+        /* Make table cells black background with white text */
+        [data-testid="stDataFrame"] td, table td {
             background-color: #000000 !important;
             color: #ffffff !important;
             border-color: #222222 !important;
