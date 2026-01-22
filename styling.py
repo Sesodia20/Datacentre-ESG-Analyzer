@@ -25,6 +25,26 @@ def apply_page_styling():
             border-color: #000000 !important;
         }
 
+        /* Make toolbar and menu visible with dark theme */
+        [data-testid="stToolbar"] {
+            background-color: #000000 !important;
+            display: flex !important;
+            visibility: visible !important;
+        }
+
+        /* Style toolbar buttons and menu */
+        [data-testid="stToolbarActionButton"],
+        [data-testid="stToolbar"] button {
+            background-color: #000000 !important;
+            color: #ffffff !important;
+            border: 1px solid #333333 !important;
+        }
+
+        [data-testid="stToolbar"] button:hover {
+            background-color: #1a1a1a !important;
+            border: 1px solid #555555 !important;
+        }
+
         /* Sidebar styling - refactored without aggressive * selector */
         [data-testid="stSidebar"] {
             background-color: #0b0b0b;
