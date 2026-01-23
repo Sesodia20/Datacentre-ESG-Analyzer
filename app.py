@@ -225,7 +225,6 @@ if enable_ai:
             with st.spinner("Generating analysis..."):
                 analysis = generate_esg_analysis(df, selected_year, prev_year)
                 st.session_state.analysis_text = analysis
-                st.write(analysis)
     
     with col2:
         focus_map = {
@@ -239,25 +238,34 @@ if enable_ai:
                 focus_area = focus_map.get(ai_option, "overall")
                 recommendations = generate_recommendations(df, selected_year, prev_year, focus_area)
                 st.session_state.recommendations_text = recommendations
-                st.write(recommendations)
+
+    # Display both sections independently if they exist
+    if st.session_state.analysis_text:
+        st.markdown("### 📊 ESG Analysis")
+        st.write(st.session_state.analysis_text)
+    
+    if st.session_state.recommendations_text:
+        st.markdown("### 💡 Recommendations")
+        st.write(st.session_state.recommendations_text)
 
     # PDF download section
-    st.markdown("### Export AI Output")
-    if st.session_state.analysis_text and st.session_state.recommendations_text:
-        pdf_bytes = create_pdf_report(
-            st.session_state.analysis_text,
-            st.session_state.recommendations_text,
-            selected_year,
-            prev_year,
-        )
-        st.download_button(
-            label="Download PDF (Analysis + Recommendations)",
-            data=pdf_bytes,
-            file_name=f"esg_report_{selected_year}.pdf",
-            mime="application/pdf",
-        )
-    else:
-        st.info("Generate both analysis and recommendations to enable PDF download.")
+    if st.session_state.analysis_text or st.session_state.recommendations_text:
+        st.markdown("### Export AI Output")
+        if st.session_state.analysis_text and st.session_state.recommendations_text:
+            pdf_bytes = create_pdf_report(
+                st.session_state.analysis_text,
+                st.session_state.recommendations_text,
+                selected_year,
+                prev_year,
+            )
+            st.download_button(
+                label="Download PDF (Analysis + Recommendations)",
+                data=pdf_bytes,
+                file_name=f"esg_report_{selected_year}.pdf",
+                mime="application/pdf",
+            )
+        else:
+            st.info("Generate both analysis and recommendations to enable PDF download.")
 
 
 # Show data preview and simple summary below
