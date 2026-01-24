@@ -7,15 +7,25 @@ import pandas as pd
 # Load environment variables
 load_dotenv()
 
-# Configure Gemini API
+# Configure Gemini API (optional - may not be present)
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-if not GEMINI_API_KEY:
-    raise ValueError("GEMINI_API_KEY not found in .env file")
 
-genai.configure(api_key=GEMINI_API_KEY)
+# Initialize model only if API key exists
+if GEMINI_API_KEY:
+    genai.configure(api_key=GEMINI_API_KEY)
+    model = genai.GenerativeModel("gemini-2.5-flash")
+else:
+    model = None
 
-# Initialize the Gemini model
-model = genai.GenerativeModel("gemini-2.5-flash")
+
+def is_api_available():
+    """
+    Check if Gemini API is configured and available.
+    
+    Returns:
+        bool: True if API key is set, False otherwise
+    """
+    return GEMINI_API_KEY is not None and model is not None
 
 
 def compute_metric(df, year_col, year, key, agg="sum"):
@@ -41,7 +51,14 @@ def generate_esg_analysis(df, selected_year, prev_year=None):
     
     Returns:
         str: Analysis text from Gemini
+        
+    Raises:
+        RuntimeError: If Gemini API is not configured
+        ValueError: If data is invalid or incomplete
     """
+    if not is_api_available():
+        raise RuntimeError("Gemini API key is not configured. Please add GEMINI_API_KEY to .env file.")
+    
     # Find year column
     year_col = None
     for col in df.columns:
@@ -50,11 +67,11 @@ def generate_esg_analysis(df, selected_year, prev_year=None):
             break
     
     if year_col is None:
-        return "Error: Could not find year column in dataset"
+        raise ValueError("Could not find year column in dataset")
     
     year_data = df[df[year_col] == selected_year]
     if year_data.empty:
-        return f"No data found for year {selected_year}"
+        raise ValueError(f"No data found for year {selected_year}")
     
     # Compute metrics for current year
     metrics_current = {
@@ -124,7 +141,7 @@ def generate_esg_analysis(df, selected_year, prev_year=None):
         response = model.generate_content(prompt)
         return response.text
     except Exception as e:
-        return f"Error generating analysis: {str(e)}"
+        raise RuntimeError(f"Failed to generate analysis: {str(e)}")
 
 
 def generate_recommendations(df, selected_year, prev_year=None, focus_area="overall"):
@@ -139,7 +156,14 @@ def generate_recommendations(df, selected_year, prev_year=None, focus_area="over
     
     Returns:
         str: Recommendations text from Gemini
+        
+    Raises:
+        RuntimeError: If Gemini API is not configured
+        ValueError: If data is invalid or incomplete
     """
+    if not is_api_available():
+        raise RuntimeError("Gemini API key is not configured. Please add GEMINI_API_KEY to .env file.")
+    
     year_col = None
     for col in df.columns:
         if "year" in col.lower():
@@ -147,7 +171,7 @@ def generate_recommendations(df, selected_year, prev_year=None, focus_area="over
             break
     
     if year_col is None:
-        return "Error: Could not find year column in dataset"
+        raise ValueError("Could not find year column in dataset")
     
     # Compute metrics
     metrics_current = {
@@ -215,5 +239,5 @@ def generate_recommendations(df, selected_year, prev_year=None, focus_area="over
         response = model.generate_content(prompt)
         return response.text
     except Exception as e:
-        return f"Error generating recommendations: {str(e)}"
+        raise RuntimeError(f"Failed to generate recommendations: {str(e)}")
 

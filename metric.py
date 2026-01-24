@@ -1,6 +1,18 @@
 import pandas as pd
 import numpy as np
 
+# Required columns for ESG data validation
+REQUIRED_COLUMNS = [
+    "year", "data_centre", "location", "energy_kwh", "water_liters", 
+    "pue", "co2e_per_kwh", "ghg_emissions_kgco2e", "land_used_m2"
+]
+
+# Numeric columns that need safe conversion
+NUMERIC_COLUMNS = [
+    "energy_kwh", "water_liters", "pue", "co2e_per_kwh", 
+    "ghg_emissions_kgco2e", "land_used_m2", "year"
+]
+
 # KPI configuration: sum for totals, mean for ratio metrics
 KPI_CONFIG = [
     {"key": "energy_kwh", "label": "Energy", "agg": "sum", "unit": "kWh", "is_float": False},
@@ -117,3 +129,46 @@ def prepare_chart_data(df, year_col, years):
             })
     
     return pd.DataFrame(chart_data)
+
+
+def validate_dataframe(df):
+    """
+    Validate that dataframe contains all required columns.
+    
+    Args:
+        df (pd.DataFrame): The dataframe to validate
+    
+    Returns:
+        tuple: (is_valid: bool, missing_columns: list)
+    """
+    missing = [col for col in REQUIRED_COLUMNS if col not in df.columns]
+    is_valid = len(missing) == 0
+    return is_valid, missing
+
+
+def convert_numeric_columns(df):
+    """
+    Safely convert numeric columns using pd.to_numeric with error coercion.
+    
+    Args:
+        df (pd.DataFrame): The dataframe to convert
+    
+    Returns:
+        tuple: (converted_df: pd.DataFrame, warnings_dict: dict with NaN counts by column)
+    """
+    df = df.copy()
+    warnings_dict = {}
+    
+    for col in NUMERIC_COLUMNS:
+        if col in df.columns:
+            # Count original non-NaN values
+            before = df[col].notna().sum()
+            # Convert with coercion (invalid values become NaN)
+            df[col] = pd.to_numeric(df[col], errors='coerce')
+            # Count NaN values created by conversion
+            after = df[col].notna().sum()
+            nan_count = before - after
+            if nan_count > 0:
+                warnings_dict[col] = nan_count
+    
+    return df, warnings_dict

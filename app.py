@@ -2,8 +2,11 @@ import os
 import streamlit as st
 import pandas as pd
 import numpy as np
-from gemini_api import generate_esg_analysis, generate_recommendations
-from metric import KPI_CONFIG, compute_metric, format_number, calculate_kpi_values, prepare_chart_data
+from gemini_api import generate_esg_analysis, generate_recommendations, is_api_available
+from metric import (
+    KPI_CONFIG, compute_metric, format_number, calculate_kpi_values, prepare_chart_data,
+    validate_dataframe, convert_numeric_columns
+)
 from charts import plot_bar_charts, plot_line_charts
 from styling import apply_page_styling
 from analysis import create_pdf_report
@@ -75,6 +78,23 @@ else:
 if df is None:
     st.info("Provide a CSV (upload or place a default in `data/`) to enable KPI analysis.")
     st.stop()
+
+# Validate required columns
+is_valid, missing_columns = validate_dataframe(df)
+if not is_valid:
+    st.error(f"❌ Missing required columns: {', '.join(missing_columns)}")
+    st.info("Required columns: " + ", ".join([
+        "year", "data_centre", "location", "energy_kwh", "water_liters", 
+        "pue", "co2e_per_kwh", "ghg_emissions_kgco2e", "land_used_m2"
+    ]))
+    st.stop()
+
+# Convert numeric columns safely
+df, nan_warnings = convert_numeric_columns(df)
+if nan_warnings:
+    warning_text = ", ".join([f"{col} ({count} invalid values)" for col, count in nan_warnings.items()])
+    st.warning(f"⚠️ Data quality note: {warning_text} were converted to missing values")
+
 
 # Infer the year column
 year_col = infer_year_column(df)
@@ -207,7 +227,12 @@ st.subheader("AI-Powered ESG Analysis & Recommendations")
 
 with st.sidebar:
     st.header("AI Analysis Settings")
-    enable_ai = st.checkbox("Enable AI Analysis", value=False)
+    
+    # Show API warning if not configured
+    if not is_api_available():
+        st.warning("⚠️ Gemini API not configured. Add GEMINI_API_KEY to .env to enable AI features.")
+    
+    enable_ai = st.checkbox("Enable AI Analysis", value=False, disabled=not is_api_available())
     
     if enable_ai:
         st.write("**Select Analysis Type:**")
@@ -221,10 +246,17 @@ if enable_ai:
     col1, col2 = st.columns(2)
     
     with col1:
-        if st.button("Generate Analysis", key="analyze_btn"):
-            with st.spinner("Generating analysis..."):
-                analysis = generate_esg_analysis(df, selected_year, prev_year)
-                st.session_state.analysis_text = analysis
+        if st.button("Generate Analysis", key="analyze_btn", disabled=not is_api_available()):
+            try:
+                with st.spinner("🔄 Generating analysis..."):
+                    analysis = generate_esg_analysis(df, selected_year, prev_year)
+                    st.session_state.analysis_text = analysis
+            except RuntimeError as e:
+                st.error(f"API Configuration Error: {str(e)}")
+            except ValueError as e:
+                st.error(f"Data Error: {str(e)}")
+            except Exception as e:
+                st.error(f"Failed to generate analysis. Please try again.")
     
     with col2:
         focus_map = {
@@ -233,11 +265,18 @@ if enable_ai:
             "Water Focus": "water",
             "Emissions Focus": "emissions"
         }
-        if st.button("Generate Recommendations", key="recommend_btn"):
-            with st.spinner("Generating recommendations..."):
-                focus_area = focus_map.get(ai_option, "overall")
-                recommendations = generate_recommendations(df, selected_year, prev_year, focus_area)
-                st.session_state.recommendations_text = recommendations
+        if st.button("Generate Recommendations", key="recommend_btn", disabled=not is_api_available()):
+            try:
+                with st.spinner("🔄 Generating recommendations..."):
+                    focus_area = focus_map.get(ai_option, "overall")
+                    recommendations = generate_recommendations(df, selected_year, prev_year, focus_area)
+                    st.session_state.recommendations_text = recommendations
+            except RuntimeError as e:
+                st.error(f"API Configuration Error: {str(e)}")
+            except ValueError as e:
+                st.error(f"Data Error: {str(e)}")
+            except Exception as e:
+                st.error(f"Failed to generate recommendations. Please try again.")
 
     # Display both sections independently if they exist
     if st.session_state.analysis_text:
@@ -247,6 +286,7 @@ if enable_ai:
     if st.session_state.recommendations_text:
         st.markdown("### 💡 Recommendations")
         st.write(st.session_state.recommendations_text)
+
 
     # PDF download section
     if st.session_state.analysis_text or st.session_state.recommendations_text:
