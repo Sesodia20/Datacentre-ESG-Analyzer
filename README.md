@@ -20,10 +20,9 @@ ESG data for data centres is often siloed, inconsistent, and messy. Teams need o
 - **PDF Export:** Generates a concise report using `fpdf2` for sharing.  
 - **Data Validation:** Required column checks and safe numeric conversion with user-facing warnings.  
 - **Graceful Degradation:** AI features auto-disable when `GEMINI_API_KEY` is missing; core analytics still work.
-- Dark Theme UX: Custom styling for sidebar, tables, and controls for readability.
 
 ## Data Format
-Upload a CSV in the app (or place a default file at `data/datacentre_env.csv`).
+Upload a CSV in the app (or select the default file at `data/datacentre_env.csv`).
 
 ## How to Run
 1. # Clone the repository
@@ -58,6 +57,11 @@ Upload a CSV in the app (or place a default file at `data/datacentre_env.csv`).
   - Purpose: Turn KPIs + trends into concise insights and tailored action plans.
   - Availability: Checked at runtime; disabled gracefully if `GEMINI_API_KEY` is absent.
   - Deprecation Notice: Current client library `google.generativeai` shows a warning; migration to `google.genai` is recommended.
+
+- **Claude Haiku (Anthropic):** Used during development as an AI coding assistant/agent.
+  - Purpose: Support prompt design, code generation/refactoring, debugging suggestions, and UI/UX improvements during implementation.
+  - Role: Assisted development workflow only; final integration and decisions were user-reviewed and implemented in the codebase.
+
 
 ## Repository
 - GitHub: https://github.com/Sesodia20/Datacentre-ESG-Analyzer.git
