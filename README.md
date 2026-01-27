@@ -1,28 +1,29 @@
 # Datacentre ESG Analyzer
 
-AI-powered ESG sustainability dashboard for data centres. It helps sustainability teams, operations, and analysts load ESG data, track KPIs, visualize trends, and generate actionable, AI-assisted recommendations. The app runs locally via Streamlit with a professional dark theme and robust error handling.
+AI-powered ESG sustainability dashboard for data centres. It helps sustainability teams, operations, and analysts load ESG data, validate inputs, track KPIs, visualise trends, and generate actionable, AI-assisted recommendations. The app runs locally via Streamlit with a professional dark theme and robust error handling.
 
 ## Project Overview
-# Problem Solved 
-ESG data for data centres is often siloed and messy. Teams need one unified view to validate inputs, compute KPIs (energy, water, emissions, land), compare year-over-year changes, and derive insights quickly.
-# Intended Users
-Sustainability managers, data centre operations, ESG analysts, and stakeholders preparing internal reports or disclosures.
+## Problem Solved
+ESG data for data centres is often siloed, inconsistent, and messy. Teams need one unified view to validate inputs, compute key sustainability KPIs (energy, water, emissions, land), compare year-over-year changes, and derive insights quickly for internal reporting and decision-making.
 
-## Key Features
-# KPI Dashboard 
-6 KPI cards (Energy, Water, GHG Emissions, Land Use, PUE, CUE) with safe YoY deltas.
-# Interactive Charts
-Yearly aggregated bar/line charts (Plotly) with dark theme styling.
-# AI Insights
-Gemini-powered ESG analysis and tailored recommendations by focus area (energy, water, emissions, overall).
-# PDF Export 
-Generate a concise report via `fpdf2` for sharing.
-# Data Validation
-Required column checks and safe numeric conversion with user-facing warnings.
-# Graceful Degradation
-AI features auto-disable when the API key is missing; user-friendly error messages.
-# Dark Theme UX
-Custom styling for sidebar, tables, and controls for readability.
+## Intended Users
+- Sustainability managers  
+- Data centre operations teams  
+- ESG analysts  
+- Stakeholders preparing internal reports or disclosures
+
+## Key Functionalities
+
+- **KPI Dashboard:** 6 KPI cards (Energy, Water, GHG Emissions, Land Use, PUE, CUE) with safe YoY deltas.  
+- **Interactive Charts:** Yearly aggregated bar/line charts (Plotly) with dark-theme styling.  
+- **AI Insights:** Gemini-powered ESG analysis and tailored recommendations by focus area (energy, water, emissions, overall).  
+- **PDF Export:** Generates a concise report using `fpdf2` for sharing.  
+- **Data Validation:** Required column checks and safe numeric conversion with user-facing warnings.  
+- **Graceful Degradation:** AI features auto-disable when `GEMINI_API_KEY` is missing; core analytics still work.
+- Dark Theme UX: Custom styling for sidebar, tables, and controls for readability.
+
+## Data Format
+Upload a CSV in the app (or place a default file at `data/datacentre_env.csv`).
 
 ## How to Run
 1. # Clone the repository

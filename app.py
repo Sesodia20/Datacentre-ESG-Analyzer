@@ -23,7 +23,7 @@ if "recommendations_text" not in st.session_state:
     st.session_state.recommendations_text = None
 
 st.title("Data Centre ESG Analyser")
-st.write("Load and analyze ESG data for data centres")
+st.write("Load and analyse ESG data for data centres")
 
 # Sidebar for file selection
 with st.sidebar:
